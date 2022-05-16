@@ -1,3 +1,10 @@
+Parse.serverURL = 'https://parseapi.back4app.com'; // This is your Server URL
+// Remember to inform BOTH the Back4App Application ID AND the JavaScript KEY
+Parse.initialize(
+  'jT5Y4di8sWdmZTlzuEGE2d1zVUZdXV9WrFJaq4Hc', // This is your Application ID
+  'F3Fko4f3VRDBsTNRaTghwbTpvyZdZu3abkNppYT0' // This is your Javascript key
+);
+
 const modal = document.querySelector('.modal-container')
 const tbody = document.querySelector('tbody')
 const sNome = document.querySelector('#m-nome')
@@ -90,7 +97,58 @@ function loadItens() {
 
 }
 
+
 const getItensBD = () => JSON.parse(localStorage.getItem('dbfunc')) ?? []
 const setItensBD = () => localStorage.setItem('dbfunc', JSON.stringify(itens))
 
 loadItens()
+
+
+const lista = async () => {
+  const Tarefa = Parse.Object.extend('Tarefa');
+  const query = new Parse.Query(Tarefa);
+  try {
+    const results = await query.find();
+    vetortarefas = results;
+    gerarLista();
+  } catch (error) {
+    console.error('Error while fetching Tarefa', error);
+  }
+};
+
+const inserir = async () => {
+  const myNewObject = new Parse.Object('Tarefa');
+  myNewObject.set('descricao', inputdescricao.value);
+  myNewObject.set('concluida', false);
+  inputdescricao.value = "";
+  inputdescricao.focus();
+  try {
+    const result = await myNewObject.save();
+    console.log('Tarefa created', result);
+    lista();
+  } catch (error) {
+    console.error('Error while creating Tarefa: ', error);
+  }
+};
+
+const removertarefa = async (evt2, tarefa) => {
+    tarefa.set(evt2.target.remove);
+    try {
+      const response = await tarefa.destroy();
+      console.log('Delet ParseObject', response);
+      lista();
+    } catch (error) {
+      console.error('Error while updating Tarefa', error);
+    }
+  };
+
+const checktarefa = async (evt, tarefa, txt) => {
+  tarefa.set('concluida', evt.target.checked);
+  try {
+    const response = await tarefa.save();
+    console.log(response.get('concluida'));
+    console.log('Tarefa updated', response)
+  } catch (error) {
+    console.error('Error while updating Tarefa', error);
+  }
+};
