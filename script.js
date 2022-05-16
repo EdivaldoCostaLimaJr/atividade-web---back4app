@@ -105,8 +105,8 @@ loadItens()
 
 
 const lista = async () => {
-  const Tarefa = Parse.Object.extend('Tarefa');
-  const query = new Parse.Query(Tarefa);
+  const cadastro = Parse.Object.extend('cadastro');
+  const query = new Parse.Query(cadastro);
   try {
     const results = await query.find();
     vetortarefas = results;
